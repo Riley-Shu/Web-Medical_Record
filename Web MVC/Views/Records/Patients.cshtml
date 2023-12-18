@@ -1,0 +1,663 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    //String qryChartNo = ViewData["qryChartNo"] as String;
+    String qryChartNo = ViewBag.qryChartNo as String;
+    String qrySex = ViewBag.qrySex as String;
+    String[] selectList = ViewData["sexSelect"] as String[];
+    String qryBirth = ViewBag.qryBirth as String;
+    String qryVisitDate = ViewBag.qryVisitDate as String;
+}
+
+<script>
+    //全域變數
+    var qryChartNo = '@Html.Raw(qryChartNo)'
+    var qrySex = '@Html.Raw(qrySex)'
+    var qryBirth = '@Html.Raw(qryBirth)'
+    var qryVisitDate = '@Html.Raw(qryVisitDate)'
+
+
+    //jQuery初始化
+    $(document).ready(
+        function () {
+            $('#txtBirthday').datepicker( //查詢功能以月曆呈現 (jQuery Widget: datepicker)
+                {
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: "yy-mm-dd",
+
+                    yearRange: "1985:2030",
+                    onSelect: function (e) {
+                        app.birthday = e;
+                    }
+                }
+            );
+            $('#txtVisitDate').datepicker( //查詢功能以月曆呈現 (jQuery Widget: datepicker)
+                {
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: "yy-mm-dd",
+
+                    yearRange: "1985:2030",
+                    onSelect: function (e) {
+                        app.visitDate = e;
+                    }
+                }
+            );
+        }
+    );
+
+</script>
+
+
+<fieldset id="app"> @* Vue渲染 *@
+    @* <div>{{100/5}}</div> *@
+    <div style="text-align: right;"><h7>{{currentTime()}}</h7></div>  @* 方法: 顯示現在時間 (使用momentjs) *@
+    <div style="margin: 10px;"></div>
+    <h2><b>病歷查詢</b></h2>
+
+    <fieldset> @* 查詢欄位 *@
+    <div>
+        <table> @* 說明: 藉由table來將欄位對齊 *@
+            <tbody>
+                <tr>
+                    <td style="padding:3px">根據</td>
+                    <td style="text-align:center">病歷號</td>
+                    <td style="padding:6px"></td>
+                    <td> <input type="text" v-model:value="chartNo" style="width:185px;height:27px"/></td>
+                    <td><button v-on:click="qryChartNoHandler">查詢</button></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td style="padding:3px">根據</td>
+                    <td style="text-align:center">性別</td>
+                    <td style="padding:6px"></td>
+                    <td><select v-model:value="sex" style="width:185px;height:27px"> @*說明: 使用select呈現 *@
+                            @foreach (var item in selectList)
+                            {
+                                <option value="@item" selected> @item </option>
+                            }
+                        </select>
+                    </td>
+                    <td><button v-on:click="qrySexHandler">查詢</button></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td style="padding:3px">根據</td>
+                    <td style="text-align:center">生日</td>
+                    <td style="padding:6px"></td>
+                    <td><input type="text" v-model:value="birthday" style="width:185px;height:27px" id="txtBirthday" /></td> @* 使用jQuery Widget: datepicker呈現 *@
+                    <td><button v-on:click="qrybirthdayHandler">查詢</button></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td style="padding:3px">根據</td>
+                    <td style="text-align:center">看診日期</td>
+                    <td style="padding:6px"></td>
+                    <td> <input type="text" v-model:value="visitDate" style="width:185px;height:27px" id="txtVisitDate" /></td> @* 使用jQuery Widget: datepicker呈現 *@
+                    <td><button v-on:click="qryVisitDateHandler">查詢</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </fieldset>
+   
+    <fieldset v-show="showQry"> @* 結果欄位 *@
+    <div>
+            <div style="margin-bottom:30px"></div>
+
+        <div style="text-align:left">搜尋結果: 共{{result.length}}筆</div>
+            <div style="margin-bottom:10px"></div>
+            <table style="background-color:azure" class="table  table-hover " >
+            <thead>
+                <tr>
+                    @* <td style="text-align:center">詳細</td> *@
+                    <td style="text-align:center">病歷號</td>
+                    <td style="text-align:center">姓名</td>
+                    <td style="text-align:center">性別</td>
+                    <td style="text-align:center">生日</td>
+                    <td style="text-align:center">看診日期</td>
+                    <td style="text-align:center">資料維護</td>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr v-for="item,index in result"> @* 說明: index是連接表格與對話盒的accesskey *@
+                        @* <td style="text-align:center" ><button>詳細</button> </td> @* 觸發方法檢視詳細資料  *@
+                        <td style="text-align:center">{{item.chartNo}}</td> @* 呈現查詢結果的資料 *@
+                        <td style="text-align:center">{{item.name}}</td>
+                        <td style="text-align:center">{{item.sex}}</td>
+                        <td style="text-align:center">{{item.birthday| dateFormatter}}</td>
+                        <td style="text-align:center">{{item.visitDate| dateFormatter}}</td>
+                        <td style="text-align:center"> 
+                            <button class=" btn btn-success" v-on:click="editDataHandler" v-bind:accesskey="index">編輯</button> @* 觸發方法編輯資料 *@
+                            <button class=" btn btn-danger" v-on:click="delDataHandler" v-bind:accesskey="index">刪除</button> @* 觸發方法刪除資料 *@
+                        </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </fieldset>
+
+
+    <fieldset v-show="showMsg">
+        @* 錯誤訊息欄位 (直接顯示在頁面) *@
+        <div style="margin:30px"></div>
+        <div style="color:red"><b><h3>{{msg}}</h3></b></div>
+        <div style="color:red"><h4>{{msg2}}</h4></div>
+    </fieldset>
+
+    <fieldset id="msgDialog" style="display:None">
+        @* 錯誤訊息欄位 (彈出式式窗) *@
+        <div style="margin:20px"></div>
+        <div ><h4>{{msg2}}</h4></div>
+    </fieldset>
+
+
+    <fieldset id="editDialog" style="display:None" > @*編輯資料強佔式對話盒 (jQuery Widget: Dialog)*@
+        <table>
+            <tr>
+                <td>病歷號</td>
+                <td> <input type="text" v-model:value="curPatient.chartNo" readonly /></td> @* 呈現使用者選擇的病患資料 *@
+            </tr>
+            <tr>
+                <td>姓名</td>
+                <td> <input type="text" v-model:value="curPatient.name" /></td>
+
+            </tr>
+            <tr>
+                <td>性別</td>
+                <td> <input type="text" v-model:value="curPatient.sex" /></td>
+            </tr>
+            <tr>
+                <td>生日</td>
+                <td> <input type="text" v-model:value="curPatient.birthday" /></td>
+
+            </tr>
+            <tr>
+                <td>看診日期</td>
+                <td> <input type="text" v-model:value="curPatient.visitDate" /></td>
+            </tr>
+        </table>
+    </fieldset>
+
+</fieldset>
+
+
+@* <fieldset id="cancelDialog" style="display:None">
+    <div style="margin:20px"></div>
+    <div><h4>若資料有誤，請重整頁面</h4></div>
+</fieldset> *@
+
+<fieldset id="delDialog" style="display:None">
+    <div style="margin:20px"></div>
+    <div><h4>確定要刪除此病患資料？</h4></div>
+</fieldset>
+
+
+
+<script>
+    //建立日期格式filter (使用momentjs)
+    Vue.filter("dateFormatter",
+        function (date) {
+            return moment(date).format("YYYY-MM-DD");
+        }
+    );
+
+
+    var data = {
+        //for 頁面
+        chartNo: "",
+        chartAPI: qryChartNo,
+        result: [],
+        showQry:false,
+        msg:'',
+        msg2:'',
+        showMsg:false,
+        sex:'male',
+        sexAPI:qrySex,
+        birthday: '1985-05-01',
+        birthAPI: qryBirth,
+        visitDate: '1999-01-05',
+        visitAPI: qryVisitDate,
+        //for 編輯刪除功能
+        curPatient: {},
+        sourcePatient: {},
+        index:1
+    }
+
+    var methods ={
+        //方法: 根據病歷號查詢
+        qryChartNoHandler: function (e) {
+            console.log('qryChartNoHandler');
+            //Part1: 刷新頁面
+            app.showQry = false;
+            app.showMsg = false;
+
+            //Part2: 取得ServiceURL，並使用axios取得資料
+            console.log(this.chartNo);
+            console.log(this.chartAPI);
+            let reUrl = app.chartAPI.replace('{0}', this.chartNo);
+            console.log(reUrl);
+            axios.get(reUrl)
+            .then(
+                (r) => { 
+                    //正確
+                    console.log("then");
+                    console.log(r);
+                    app.result = r.data;
+                    app.showQry = true;
+
+                }
+            )
+            .catch(
+                (r) => {
+                    //錯誤
+                    console.log("catch");
+                    console.log(r);
+                    app.msg = r.response.data.msg;
+                        app.msg2 = r.response.data.msg2;
+
+                        // app.showMsg = true;
+                        $("#msgDialog").dialog(
+                            {
+                                title: '錯誤訊息',
+                                modal: true,
+                                width: 420,
+                                buttons:
+                                    [{
+                                        text: '關閉',
+                                        class: 'btn btn-primary',
+
+                                        click: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }]
+                            }
+                        );
+                    }
+            )
+        },
+        //方法: 顯示現在時間 (使用momentjs)
+        currentTime: function () {
+            return moment().format("日期: YYYY-MM-DD 時間:HH:mm:ss") //https://momentjs.com/
+        },
+        
+        //方法: 根據性別查詢
+        qrySexHandler:function(){
+            console.log('qrySexHandler');
+
+            //Part1: 刷新頁面
+            app.showQry = false;
+            app.showMsg = false;
+
+            //Part2: 取得ServiceURL，並使用axios取得資料
+            let reUrl = app.sexAPI.replace('{0}', this.sex);
+            console.log(reUrl);
+            axios.get(reUrl)
+                .then(
+                    (r) => {
+                        //正確
+                        console.log("then");
+                        console.log(r);
+                        app.result = r.data;
+                        app.showQry = true;
+                    }
+                )
+                .catch(
+                    (r) => {
+                        //錯誤
+                        console.log("catch");
+                        console.log(r);
+                        app.msg = r.response.data.msg;
+                        app.msg2 = r.response.data.msg2;
+
+                        // app.showMsg = true;
+                        $("#msgDialog").dialog(
+                            {
+                                title: '錯誤訊息',
+                                modal: true,
+                                width: 420,
+                                buttons:
+                                    [{
+                                        text: '關閉',
+                                        class: 'btn btn-primary',
+
+                                        click: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }]
+                            }
+                        );
+                    }
+                )
+        },
+        //方法: 根據生日查詢
+        qrybirthdayHandler: function () {
+            console.log('qrybirthdayHandler');
+
+            //Part1: 刷新頁面
+            app.showQry = false;
+            app.showMsg = false;
+
+            //Part2: 取得ServiceURL，並使用axios取得資料
+            let reUrl = app.birthAPI.replace('{0}', this.birthday);
+            console.log(reUrl);
+            axios.get(reUrl)
+                .then(
+                    (r) => {
+                        //正確
+                        console.log("then");
+                        console.log(r);
+                        app.result = r.data;
+                        app.showQry = true;
+                    }
+                )
+                .catch(
+                    (r) => {
+                        //錯誤
+                        console.log("catch");
+                        console.log(r);
+                        app.msg = r.response.data.msg;
+                        app.msg2 = r.response.data.msg2;
+
+                        // app.showMsg = true;
+                        $("#msgDialog").dialog(
+                            {
+                                title: '錯誤訊息',
+                                modal: true,
+                                width: 420,
+                                buttons:
+                                    [{
+                                        text: '關閉',
+                                        class: 'btn btn-primary',
+
+                                        click: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }]
+                            }
+                        );
+                    }
+                )
+        },
+        //方法: 根據看診日查詢
+        qryVisitDateHandler: function () {
+            console.log('qryVisitDateHandler');
+
+            //Part1: 刷新頁面
+            app.showQry = false;
+            app.showMsg = false;
+
+            //Part2: 取得ServiceURL，並使用axios取得資料
+            let reUrl = app.visitAPI.replace('{0}', this.visitDate);
+            console.log(reUrl);
+            axios.get(reUrl)
+                .then(
+                    (r) => {
+                        //正確
+                        console.log("then");
+                        console.log(r);
+                        app.result = r.data;
+                        app.showQry = true;
+
+                    }
+                )
+                .catch(
+                    (r) => {
+                        //錯誤
+                        console.log("catch");
+                        console.log(r);
+                        app.msg = r.response.data.msg;
+                        app.msg2 = r.response.data.msg2;
+                        // app.showMsg = true;
+                        $("#msgDialog").dialog(
+                            {
+                                title: '錯誤訊息',
+                                modal: true,
+                                width: 420,
+                                buttons:
+                                    [{
+                                        text: '關閉',
+                                        class: 'btn btn-primary',
+
+                                        click: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }]
+                            }
+                        );
+                    }
+                )
+        },
+        //方法: 編輯資料
+        editDataHandler: function (e) {
+            console.log('editDataHandler');
+            console.log(e);
+            app.showMsg = false;
+
+
+            //Part1 取得選擇之病患的資料
+            let accessKey = e.target.accessKey; //說明:index是連接表格與對話盒的accesskey
+            this.curPatient = this.result[accessKey];
+            console.log("this.curPatient");
+            console.log(accessKey);
+            console.log(this.curPatient);
+
+            //Part2 備份選擇之病患的資料 (使用Object.assign()方法)
+            app.index = accessKey;
+            this.sourcePatient = Object.assign({}, this.curPatient); //說明: Object.assign()是JavaScript中的一種方法，用於將一個或多個源對象的所有可枚舉自有屬性複製到目標對象中。它返回修改後的目標對象。
+            console.log("this.sourcePatient");
+            console.log(this.index);
+            console.log(this.sourcePatient);
+
+            // var formattedDate = moment(this.curPatient.birthday).format('YYYY-MM-DD');
+
+            //Part3 打開對話盒
+            $('#editDialog').dialog(
+                {
+                    title:'編輯病患資料',
+                    modal:true, //強佔式視窗
+                    width: 330,
+
+                    buttons:[
+                        {
+                            //取消編輯
+                            text:'取消',
+                            class:'btn btn-danger',
+                            click: function () {
+                                //還原原始資料
+                                console.log("取消更新");
+                                app.result[app.index] = app.sourcePatient;
+                                console.log("還原為原始資料")
+                                console.log(app.sourcePatient);
+                                //關閉對話盒
+                                $('#editDialog').dialog('close');
+                                // //取消更新對話盒
+                                // $('#cancelDialog').dialog({
+                                //     title: '訊息',
+                                //     modal: true,
+                                //     buttons: [
+                                //         {
+                                //             text: '關閉',
+                                //             class: 'btn btn-primary',
+                                //             click: function () {
+                                //                 $(this).dialog("close");
+                                //             }
+                                //         }
+                                //     ]
+                                // });
+
+                            }
+                        },
+                        {
+                            //更新內容
+                            text: '更新',
+                            class: 'btn btn-primary',
+                            click: function () 
+                            {
+                                let service = 'https://localhost:7241/Records/update/rawdata';
+                                console.log(service);                 
+                                $.ajax( //說明: jQuery.ajax()是jQuery的核心方法之一，用於發送HTTP請求
+                                    {
+                                        url: service, // 設定服務位址
+                                        type: 'PUT', // 設定 HTTP 方法
+                                        data: JSON.stringify(app.curPatient), //說明: JSON.stringify()是JavaScript中的一種方法，用於將JavaScript對象轉換為JSON字符串。
+                                        beforeSend: function (xhr) { 
+                                            xhr.setRequestHeader("Content-Type", "application/json") // 設定 HTTP Request Header，使其能正確傳送
+                                        },
+                                        //成功格式
+                                        success: function (e) { 
+                                            console.log(e);
+                                            app.msg2 = e.msg2;
+                                            app.sourcePatient = Object.assign({}, app.curPatient); // 複製 curPatient 物件
+                                            // app.showMsg = true;
+                                        },
+                                        //錯誤格式
+                                        error: function (e) {
+                                            console.log(e);
+                                            app.msg2 = e.msg2;
+                                            // app.showMsg = true;
+                                        }
+                                    }
+                                );
+                                $('#editDialog').dialog('close'); //關閉對話盒
+                                $("#msgDialog").dialog( //訊息對話盒
+                                {
+                                    title: '訊息',
+                                    modal: true,
+                                    width: 420,
+
+                                    buttons: [
+                                        {
+                                            text:'關閉',
+                                            class: 'btn btn-primary',
+                                            click: function () 
+                                            {
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    ]
+                                }
+                                );
+                            }
+                        }
+                    ]
+                })
+        },
+        //方法: 刪除資料
+        delDataHandler:function(e){
+            console.log('delDataHandler');
+            console.log(e);
+            app.showMsg = false;
+
+            //Part1 取得選擇之病患的資料
+            let accessKey = e.target.accessKey; //說明:index是連接表格與對話盒的accesskey
+            this.curPatient = this.result[accessKey];
+            console.log("this.curPatient");
+            console.log(accessKey);
+            console.log(this.curPatient);
+
+            //Part2 備份選擇之病患的資料 (使用Object.assign()方法)
+            app.index = accessKey;
+            this.sourcePatient = Object.assign({}, this.curPatient); //說明: Object.assign()是JavaScript中的一種方法，用於將一個或多個源對象的所有可枚舉自有屬性複製到目標對象中。它返回修改後的目標對象。
+            console.log("this.sourcePatient");
+            console.log(this.index);
+            console.log(this.sourcePatient);
+
+
+            //Part3 打開對話盒
+            $('#delDialog').dialog
+            (
+                {
+                    title: '提醒',
+                    modal: true, //強佔式視窗
+                    buttons: [
+                        {
+                            //取消刪除
+                            text: '取消',
+                            class: 'btn btn-danger',
+                            click: function () {
+                                //還原原始資料
+                                console.log("取消刪除");
+                                app.result[app.index] = app.sourcePatient;
+                                console.log("還原為原始資料")
+                                console.log(app.sourcePatient);
+                                //關閉對話盒
+                                $('#delDialog').dialog('close');
+                            }
+                        },
+                        {
+                            //確定刪除
+                            text: '刪除',
+                            class: 'btn btn-primary',
+                            click: function ()
+                            {
+                                let service = 'https://localhost:7241/Records/delete/' + app.curPatient.chartNo + '/rawdata';
+                                console.log(service);
+                                  
+
+                                $.ajax( //說明: jQuery.ajax()是jQuery的核心方法之一，用於發送HTTP請求
+                                    {
+                                        url: service, // 設定服務位址
+                                        type: 'DELETE', // 設定 HTTP 方法
+                                            
+                                        //成功格式
+                                        success: function (e) {
+                                            console.log(e);
+                                            console.log(accessKey);
+                                            app.result.splice(accessKey, 1); //說明: 使用splice JavaScript方法，刪除陣列中指定索引位置的元素。accessKey表示要刪除元素的索引位置，1表示要刪除的元素數量。藉此改變原始陣列，並返回被刪除的元素。
+                                            app.msg2 = e.msg2;
+                                        },
+                                        //錯誤格式
+                                        error: function (e) {
+                                            console.log(e);
+                                            app.msg2 = e.msg2;
+                                        }
+                                    }
+                                );
+                                    
+                                $('#delDialog').dialog('close'); //關閉對話盒
+                                $("#msgDialog").dialog( //訊息對話盒
+                                    {
+                                        title: '訊息',
+                                        modal: true,
+                                            width: 420,
+
+                                        buttons:[{
+                                                text: '關閉',
+                                                class: 'btn btn-primary',
+                                                click: function () {
+                                                    $(this).dialog("close");
+                                                }
+                                            }
+                                        ]
+                                    }
+                                );                                                         
+                            }
+                        }
+                    ]
+                }
+            )
+
+        }
+    }   
+
+    // var mouted = {
+    //     mouted: function () {
+    //         this.chartAPI = qryChartNo1
+    //     }
+    // }
+
+    var app = new Vue(
+        {
+            data: data,
+            methods: methods,
+            // mouted: mouted
+        }
+    );
+    app.$mount('#app');
+</script>
