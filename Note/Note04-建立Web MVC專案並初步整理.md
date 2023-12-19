@@ -123,7 +123,7 @@
     app.$mount('#app');
 </script>
 ```
-![[N04-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N04-P01.png)
 
 # Step03 使用axios取得SQL資料並呈現於前端
 #JavaScript/axios
@@ -176,4 +176,4 @@ qryChartNoHandler: function (e) {
 			})
 ```
 
-![[N04-P02.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N04-P02.png)
