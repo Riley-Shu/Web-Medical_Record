@@ -171,8 +171,7 @@ namespace Sample05_Web.Models
 
  }
 ```
-
-![[N06-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N06-P01.png)
 
 # Step05 input改為SelectList
 1. 建立Model類別
@@ -284,4 +283,4 @@ namespace Sample05_Web.Controllers
 </select>
 ```
 
-![[N06-P02.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N06-P02.png)
