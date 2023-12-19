@@ -115,6 +115,6 @@ namespace Sample05_Web.Controllers
     app.$mount('#app');
 </script>
 ```
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N03-P01.png)
 
-![[Portfolios/Sample05_Paitent_Web/@ATT/N03-P01.png]]
 
