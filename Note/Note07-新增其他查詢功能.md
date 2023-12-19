@@ -277,8 +277,7 @@ qryVisitDateHandler: function () {
 
 }
 ```
-
-![[N07-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N07-P01.png)
 
 # Step04 使用jQery UI Datepicker提供日期選擇器
 - [Download Builder | jQuery UI](https://jqueryui.com/download/)
