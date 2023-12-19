@@ -1,8 +1,9 @@
 # Step01 建立資料庫
-![[Portfolios/Sample05_Paitent_Web/@ATT/N01-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N01-P01.png)
 
 # Step02 建立Table 
-![[Portfolios/Sample05_Paitent_Web/@ATT/N01-P02.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N01-P02.png)
+
 ```SQL
 use Samlple05
 
@@ -224,4 +225,4 @@ values
 (N'45231200',N'陳明宏',N'Male','1999-01-02','2023-11-01')
 ```
 
-![[Portfolios/Sample05_Paitent_Web/@ATT/N01-P03.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N01-P03.png)
