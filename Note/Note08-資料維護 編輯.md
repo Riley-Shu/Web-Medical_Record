@@ -182,7 +182,7 @@ $('#editDialog').dialog(
     ]
 })
 ```
-![[N08-P03.png]]
+!![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N08-P03.png)
 
 
 # Part4  編輯對話盒的更新功能
@@ -214,9 +214,11 @@ click: function () {
 ```
 ## Web專案連接資料庫
 #我有問題 `jQuery.ajax()` PUT路徑404
-![[N08-P04.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N08-P04.png)
+
 - 不能把put功能給api，沒有json功能
-![[N08-P05.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N08-P05.png)
+
 #我有答案 要確認有確實連接上資料庫，否則會出現空物件等錯誤
 
 ### 安裝資料庫套件
@@ -232,7 +234,6 @@ click: function () {
 3. 建立連接字串
 4. 利用 DbContextOptions 類別，配置 DbContext 操作資料庫。
 
-![[Portfolios/Sample05_Paitent_Web/@ATT/N02-P01.png]]
 #### appsetting.json (Service)
 - 連接字串
 ```json
@@ -243,7 +244,7 @@ click: function () {
 - 注意: 
 	若出現【憑證鏈結是不受信任的授權單位發出的】之錯誤訊息
 	可嘗試在連接字串中加入 `TrustServerCertificate=true;`，以便讓用戶端信任 SQL Server 的憑證。
-  ![[Portfolios/Sample05_Paitent_Web/@ATT/N02-P02.png]]
+
 #### ChartInfo.cs (Web)
 - 建立Model，提供對應資料表
 ```cs
@@ -348,8 +349,6 @@ namespace Sample05_Web.Controllers
     }
 }
 ```
-
-![[Pasted image 20231129214052.png]]
 
 ## Web控制器HTTP請求
 ### RecordsController.cs (Web)
