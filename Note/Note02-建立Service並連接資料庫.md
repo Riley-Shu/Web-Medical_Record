@@ -28,7 +28,8 @@
 4. 利用 DbContextOptions 類別，配置 DbContext 操作資料庫。(`Microsoft.EntityFrameworkCore`)
 	例如: 資料庫連線字串、資料庫提供者、資料庫初始化策略等等
 
-![[Portfolios/Sample05_Paitent_Web/@ATT/N02-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N02-P01.png)
+
 ## appsetting.json (Service)
 - 連接字串
 ```json
@@ -39,7 +40,10 @@
 - 注意: 
 	若出現【憑證鏈結是不受信任的授權單位發出的】之錯誤訊息
 	可嘗試在連接字串中加入 `TrustServerCertificate=true;`，以便讓用戶端信任 SQL Server 的憑證。
-  ![[Portfolios/Sample05_Paitent_Web/@ATT/N02-P02.png]]
+
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N02-P02.png)
+
+
 ## ChartInfo.cs (Service)
 - 建立Model，提供對應資料表
 ```cs
@@ -140,10 +144,10 @@ namespace Sample05_Service.Controllers
     }
 }
 ```
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N02-P03.png)
 
-![[N02-P03.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N02-P04.png)
 
-![[N02-P04.png]]
 
 # Step04 配置CORS
 
