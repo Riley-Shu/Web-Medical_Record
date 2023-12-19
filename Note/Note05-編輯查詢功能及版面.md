@@ -64,8 +64,7 @@
      }
  }
 ```
-
-![[N05-P01.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N05-P01.png)
 
 # Part02 錯誤訊息
 ## Message.cs (Service)
@@ -111,7 +110,8 @@ public IActionResult chartQry([FromRouteAttribute(Name="chartNo")] String chartN
 }
 ```
 - Postman測試
-![[N05-P02.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N05-P02.png)
+
 ## Patients.cshtml 
 - 寫進前端
 ```html
@@ -165,7 +165,7 @@ var methods ={
     }
 }
 ```
-![[N05-P03.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N05-P03.png)
 
 # Part03 使用moment改變日期格式
 - #JavaScript/moment
@@ -194,7 +194,7 @@ var methods ={
 <td>{{item.visitDate| dateFormatter}}</td>
 ```
 
-![[N05-P04.png]]
+![image](https://github.com/Riley-Shu/Web-Medical_Record/blob/master/Note/image/N05-P04.png)
 
 # Part04 使用moment顯示現在時間
 ## Patients.cshtml 
